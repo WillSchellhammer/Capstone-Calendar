@@ -434,13 +434,11 @@ public class Main {
                     System.out.print("\nAscending or descending? ");
                     answer2 = user.next().toLowerCase();
                     switch (answer2) {
-                        case "ascending":
+                        case "ascending", "asc", "a", "+":
                             CalendarSort.date(calendar, true);
                             break;
-                        case "descending":
+                        case "descending", "desc", "d", "-":
                             CalendarSort.date(calendar, false);
-                            break;
-                        case "":
                             break;
                         default:
                             if (!answer2.equals("exit")) {
@@ -453,10 +451,10 @@ public class Main {
                     System.out.print("\nAscending or descending?");
                     answer2 = user.next().toLowerCase();
                     switch (answer2) {
-                        case "ascending":
+                        case "ascending", "asc", "a", "+":
                             CalendarSort.group(calendar, true);
                             break;
-                        case "descending":
+                        case "descending", "desc", "d", "-":
                             CalendarSort.group(calendar, false);
                             break;
                         default:
@@ -470,10 +468,10 @@ public class Main {
                     System.out.print("\nAscending or descending?");
                     answer2 = user.next().toLowerCase();
                     switch (answer2) {
-                        case "ascending":
+                        case "ascending", "asc", "a", "+":
                             CalendarSort.title(calendar, true);
                             break;
-                        case "descending":
+                        case "descending", "desc", "d", "-":
                             CalendarSort.title(calendar, false);
                             break;
                         default:
