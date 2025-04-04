@@ -7,7 +7,7 @@ public class Event {
 
     // Optional information
     private int[] time = new int[]{-1,-1}; // Format: mm,hh
-    private String description = "";
+    private String description = " ";
     private ArrayList<String> location = new ArrayList<>(); // Event can have multiple locations saved.
     private String category = "Uncategorized"; // Name of the category which the event is part of
     private int group = 0; // Priority of the category which the event is part of (for sorting)
@@ -22,6 +22,13 @@ public class Event {
 
     // Minimal information constructor
     public Event(String title, int[] date) {
+        this.title = title;
+        this.date = date;
+    }
+
+    // Minimal information constructor
+    public Event(String category, String title, int[] date) {
+        this.category = category;
         this.title = title;
         this.date = date;
     }
@@ -56,19 +63,27 @@ public class Event {
     public String toString() {
         String month = Main.intToMonth(date[1]);
         String endMonth = Main.intToMonth(dateEnd[1]);
+        String timeString = "" + time[1];
+        if (timeString.length() < 2) {
+            timeString = "0" + timeString;
+        }
+        String timeEndString = "" + timeEnd[1];
+        if (timeEndString.length() < 2) {
+            timeEndString = "0" + timeEndString;
+        }
 
         String s = "";
         s += "(" + category + ")"; // Category
         s += ", " + title; // Title
         s += ": " + month + " " + date[0] + ", " + date[2]; // Date
-        if (dateEnd[0] >= 0) {
-            s += ", " + endMonth + " " + dateEnd[0] + ", " + dateEnd[2]; // Ending Date (if exists)
+        if (dateEnd[0] != -1 && dateEnd != date) {
+            s += " - " + endMonth + " " + dateEnd[0] + ", " + dateEnd[2]; // Ending Date (if exists)
         }
-        if (time[0] >= 0) {
-            s += ", " + time[0] + ":" + time[1]; // Time (if exists)
+        if (time[0] != -1) {
+            s += ", " + time[0] + ":" + timeString; // Time (if exists)
         }
-        if (timeEnd[0] >= 0) {
-            s += ", " + timeEnd[0] + ":" + timeEnd[1]; // Ending Time (if exists)
+        if (timeEnd[0] != -1) {
+            s += " - " + timeEnd[0] + ":" + timeEndString; // Ending Time (if exists)
         }
         if (!location.isEmpty()) {
             s += ", " + location; // Location (if exists)

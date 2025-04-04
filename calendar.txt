@@ -1,1 +1,6 @@
-(Uncategorized), Untitled: December 25, 25,December 25, 25, 12:12, 23:23, [asdfj;k]
+(Class), Computer_Science: April 4, 2025 - April 4, 2025, 14:00 - 16:45, [Kirby-Manchester_241]
+(Class), Discrete_Math: April 4, 2025 - April 4, 2025, 12:30 - 13:45, [Salem_Hall_012]
+(Meeting), Engineering_Group_Meeting: April 7, 2025, 2:00
+(Music_Ensemble), Wind_Ensemble: April 7, 2025 - April 7, 2025, 3:30 - 4:50, [M201, Scales_Fine_Arts_Center]
+(Assignment), Lab_7: April 11, 2025
+(Holiday), AAPI_Month: May 1, 2025 - May 30, 2025

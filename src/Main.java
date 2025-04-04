@@ -1,15 +1,33 @@
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
     public static Scanner user = new Scanner(System.in);
 
     public static ArrayList<Event> calendar;
+    public static Queue saves = new Queue();
 
     public static void main(String[] args) {
+        System.out.println("\nCapstone Calendar: Preview Version 3 \nWarning! Do not exit with the stop button if you created a new save file (it will desync).\nPlease type \"help\" if you're not sure what to type.");
+        //loads save file names onto saves Stack
+        FileInputStream myFile = null;
+        try {
+            myFile = new FileInputStream("]save_files[.txt");
+        }
+        catch (FileNotFoundException e) {
+            System.out.println("Please create a file named \"]save_files[.txt\" in the Capstone Calendar folder. " + e);
+            System.exit(1);
+        }
+        Scanner reader = new Scanner(myFile);
+        while (reader.hasNextLine()) {
+            saves.add(reader.nextLine());
+        }
+
         calendar = new ArrayList<>();
 
         /*
@@ -38,17 +56,36 @@ public class Main {
                     sort();
                     break;
                 case "print":
-                    System.out.print("\nPrint as txt or csv?");
-                    answer2 = user.next().toLowerCase();
-                    if (answer2.equals("txt") || answer2.equals("both")) {
-                        printTXT(calendar);
-                    }
-                    if (answer2.equals("csv") || answer2.equals("both")) {
-                        printCSV(calendar);
-                    }
+                        System.out.print("\nPrint as txt, csv, or command line? ");
+                        answer2 = user.next().toLowerCase();
+                        switch (answer2) {
+                            case "txt":
+                                printTXT();
+                                break;
+                            case "csv":
+                                printCSV();
+                                break;
+                            case "cmd", "command", "command line":
+                                for (Event event : calendar) {
+                                    System.out.println(event);
+                                }
+                                break;
+                            case "help":
+                                System.out.println("Commands: txt, csv, cmd, help, exit");
+                                break;
+                            default:
+                                System.out.println("Invalid response. Command does not exist.");
+                                break;
+                        }
+                    break;
+                case "save":
+                    save();
+                    break;
+                case "load":
+                    load();
                     break;
                 case "help":
-                    System.out.println("Commands: add, edit, sort, print, help");
+                    System.out.println("Commands: add, edit, sort, print, save, load, help, stop");
                     break;
                 case "stop":
                     break;
@@ -57,6 +94,20 @@ public class Main {
                     break;
             }
         }
+        System.out.println("Saving file (type exit to skip saving)");
+        save();
+        FileOutputStream savesFile = null;
+        try {
+            savesFile = new FileOutputStream("]save_files[.txt");
+        } catch (FileNotFoundException e) {
+            System.out.println("Please create a file named \"]save_files[.txt\" in the Capstone Calendar folder. " + e);
+        }
+        PrintWriter writer = new PrintWriter(savesFile);
+        while (!saves.isEmpty()) {
+            writer.println(saves.remove());
+        }
+        writer.flush();
+        writer.close();
         System.out.println("Program concluded.");
     }
 
@@ -65,346 +116,300 @@ public class Main {
     // What happens when the user uses the command "add".
     public static void add() {
         String answer = "";
-        while (!answer.equals("exit")) {
-            System.out.print("\nWhat would you like to add? ");
-            answer = user.next().toLowerCase();
-            String answer2 = "";
-            switch (answer) {
-                case "event":
-                    String category = "Uncategorized";
-                    int group = 0;
-                    String title = "Untitled";
-                    int[] date = new int[3];
-                    int[] time = new int[2];
-                    String description = "";
-                    ArrayList<String> location = new ArrayList<>();
-                    int[] dateEnd = new int[3];
-                    int[] timeEnd = new int[2];
+        String category = "Uncategorized";
+        int group = 0;
+        String title = "Untitled";
+        int[] date = new int[]{-1,-1,-1};
+        int[] time = new int[]{-1,-1};
+        String description = "";
+        ArrayList<String> location = new ArrayList<>();
+        int[] dateEnd = new int[]{-1,-1,-1};
+        int[] timeEnd = new int[]{-1,-1};
 
-                    //ask for category
-                    System.out.print("\nEvent category (skip for none): ");
-                    answer2 = user.next();
-                    if (!answer2.equalsIgnoreCase("skip"))
-                        category = answer2;
+        //ask for category
+        System.out.print("\nEvent category (skip for none): ");
+        answer = user.next();
+        if (!answer.equalsIgnoreCase("skip"))
+            category = answer;
 
-                    if (answer2.equals("exit")) break; //exit command
+        if (answer.equals("exit")) return; //exit command
 
-                    //ask for title
-                    System.out.print("\nEvent title (skip for none): ");
-                    answer2 = user.next();
-                    if (!answer2.equalsIgnoreCase("skip"))
-                        title = answer2;
+        //ask for title
+        System.out.print("Event title (skip for none): ");
+        answer = user.next();
+        if (!answer.equalsIgnoreCase("skip"))
+            title = answer;
 
-                    if (answer2.equals("exit")) break; //exit command
+        if (answer.equals("exit")) return; //exit command
 
-                    //ask for year
-                    while (true) {
-                        System.out.print("\nEvent year: ");
-                        answer2 = user.next();
-                        if (answer2.equals("exit")) {
-                            break;
-                        }
-                        else {
-                            try {
-                                date[2] = Integer.parseInt(answer2);
-                                break;
-                            }
-                            catch (NumberFormatException e) {
-                                System.out.print(" Invalid integer. ");
-                            }
-                        }
-                    }
-
-                    if (answer2.equals("exit")) break; //exit command
-
-                    //ask for month
-                    date[1] = -1;
-                    while (date[1] <= 0 || date[1] > 12) {
-                        System.out.print("\nEvent month: ");
-                        answer2 = user.next().toLowerCase();
-                        if (answer2.equals("exit")) {
-                            break;
-                        }
-                        else {
-                            try {
-                                date[1] = Integer.parseInt(answer2);
-                            }
-                            catch (NumberFormatException e) {
-                                date[1] = monthToInt(answer2);
-                            }
-                        }
-                    }
-
-                    if (answer2.equals("exit")) break; //exit command
-
-                    //ask for day
-                    while (true) {
-                        System.out.print("\nEvent day: ");
-                        answer2 = user.next();
-                        if (answer2.equals("exit")) {
-                            break;
-                        }
-                        else {
-                            try {
-                                date[0] = Integer.parseInt(answer2);
-                                break;
-                            }
-                            catch (NumberFormatException e) {
-                                System.out.print(" Invalid integer. ");
-                            }
-                        }
-                    }
-
-                    if (answer2.equals("exit")) break; //exit command
-
-                    //ask to add optional information
-                    boolean optional = false;
-                    System.out.print("\nAdd optional information? (yes/no) ");
-                    while (true) {
-                        answer2 = user.next();
-                        if (answer2.equals("yes") || answer2.equals("y")) {
-                            optional = true;
-                            break;
-                        }
-                        else if (answer2.equals("no") || answer2.equals("n") || answer2.equals("exit")) break; //exits while loop without changing optional to true
-                        else System.out.print(" ");
-                    }
-
-                    if (answer2.equals("exit")) break; //exit command
-
-                    //ask to add ending dates/times
-                    boolean ends = false;
-                    System.out.print("\nAdd ending dates/times? (yes/no) ");
-                    while (true) {
-                        answer2 = user.next();
-                        if (answer2.equals("yes") || answer2.equals("y")) {
-                            ends = true;
-                            break;
-                        }
-                        else if (answer2.equals("no") || answer2.equals("n") || answer2.equals("exit")) break; //exits while loop without changing optional to true
-                        else System.out.print(" ");
-                    }
-
-                    if (answer2.equals("exit")) break; //exit command
-
-                    if (!optional && !ends) {
-                        calendar.add(new Event(title, date));
-                        System.out.println("Successfully created new event!\n" + calendar.getLast());
-                        break;
-                    }
-                    if (optional) {
-                        //ask for hour
-                        while (true) {
-                            System.out.print("\nEvent hour (24hr): ");
-                            answer2 = user.next();
-                            if (answer2.equals("exit")) {
-                                break;
-                            }
-                            else {
-                                try {
-                                    time[0] = Integer.parseInt(answer2);
-                                    if (time[0] >= 0 && time[0] < 24) {
-                                        break;
-                                    }
-                                    else System.out.print(" Hour must be between 0 and 23.");
-                                }
-                                catch (NumberFormatException e) {
-                                    System.out.print(" Invalid integer. ");
-                                }
-                            }
-                        }
-
-                        if (answer2.equals("exit")) break; //exit command
-
-                        //ask for minute
-                        while (true) {
-                            System.out.print("\nEvent time (min): ");
-                            answer2 = user.next();
-                            if (answer2.equals("exit")) {
-                                break;
-                            }
-                            else {
-                                try {
-                                    time[1] = Integer.parseInt(answer2);
-                                    if (time[1] >= 0 && time[1] < 60) {
-                                        break;
-                                    }
-                                    else System.out.print(" Time must be between 0 and 59.");
-                                }
-                                catch (NumberFormatException e) {
-                                    System.out.print(" Invalid integer. ");
-                                }
-                            }
-                        }
-
-                        if (answer2.equals("exit")) break; //exit command
-
-                        //ask for description
-                        System.out.print("\nEvent description (skip for none): ");
-                        answer2 = user.next();
-                        if (!answer2.equalsIgnoreCase("skip"))
-                            description = answer2;
-
-                        if (answer2.equals("exit")) break; //exit command
-
-                        //ask for locations
-                        int count = 1;
-                        while (true) {
-                            System.out.print("\nEvent location " + count + " (skip to continue): ");
-                            answer2 = user.next();
-                            if (answer2.equalsIgnoreCase("skip") || answer2.equals("exit"))
-                                break;
-                            else {
-                                location.add(answer2);
-                                count++;
-                            }
-                        }
-
-                        if (answer2.equals("exit")) break; //exit command
-                    }
-                    if (ends) {
-                        //ask for ending year
-                        while (true) {
-                            System.out.print("\nEvent ending year (skip for same as beginning): ");
-                            answer2 = user.next();
-                            if (answer2.equalsIgnoreCase("skip") || answer2.equals("exit")) {
-                                dateEnd[2] = date[2];
-                                break;
-                            }
-                            else {
-                                try {
-                                    dateEnd[2] = Integer.parseInt(answer2);
-                                    break;
-                                }
-                                catch (NumberFormatException e) {
-                                    System.out.print(" Invalid integer. ");
-                                }
-                            }
-                        }
-
-                        if (answer2.equals("exit")) break; //exit command
-
-                        //ask for ending month
-                        dateEnd[1] = -1;
-                        while (dateEnd[1] <= 0 || dateEnd[1] > 12) {
-                            System.out.print("\nEvent ending month (skip for same as beginning): ");
-                            answer2 = user.next().toLowerCase();
-                            if (answer2.equalsIgnoreCase("skip") || answer2.equals("exit")) {
-                                dateEnd[1] = date[1];
-                                break;
-                            }
-                            else {
-                                try {
-                                    dateEnd[1] = Integer.parseInt(answer2);
-                                }
-                                catch (NumberFormatException e) {
-                                    dateEnd[1] = monthToInt(answer2);
-                                }
-                            }
-                        }
-
-                        if (answer2.equals("exit")) break; //exit command
-
-                        //ask for ending day
-                        while (true) {
-                            System.out.print("\nEvent ending day (skip for same as beginning): ");
-                            answer2 = user.next();
-                            if (answer2.equalsIgnoreCase("skip") || answer2.equals("exit")) {
-                                dateEnd[0] = date[0];
-                                break;
-                            }
-                            else {
-                                try {
-                                    dateEnd[0] = Integer.parseInt(answer2);
-                                    break;
-                                }
-                                catch (NumberFormatException e) {
-                                    System.out.print(" Invalid integer. ");
-                                }
-                            }
-                        }
-
-                        if (answer2.equals("exit")) break; //exit command
-                    }
-
-                    if (!ends) {
-                        calendar.add(new Event(title, date, time, description, location, category, group));
-                        System.out.println("Successfully created new event!\n" + calendar.getLast());
-                        break;
-                    }
-
-                    if (optional && ends) {
-                        //ask for ending hour
-                        while (true) {
-                            System.out.print("\nEvent ending hour (24hr): ");
-                            answer2 = user.next();
-                            if (answer2.equals("exit")) {
-                                break;
-                            }
-                            else {
-                                try {
-                                    timeEnd[0] = Integer.parseInt(answer2);
-                                    if (timeEnd[0] >= 0 && timeEnd[0] < 24) {
-                                        break;
-                                    }
-                                    else System.out.print(" Hour must be between 0 and 23.");
-                                }
-                                catch (NumberFormatException e) {
-                                    System.out.print(" Invalid integer. ");
-                                }
-                            }
-                        }
-
-                        if (answer2.equals("exit")) break; //exit command
-
-                        //ask for ending minute
-                        while (true) {
-                            System.out.print("\nEvent ending time (min): ");
-                            answer2 = user.next();
-                            if (answer2.equals("exit")) {
-                                break;
-                            }
-                            else {
-                                try {
-                                    timeEnd[1] = Integer.parseInt(answer2);
-                                    if (timeEnd[1] >= 0 && timeEnd[1] < 60) {
-                                        break;
-                                    }
-                                    else System.out.print(" Time must be between 0 and 59.");
-                                }
-                                catch (NumberFormatException e) {
-                                    System.out.print(" Invalid integer. ");
-                                }
-                            }
-                        }
-
-                        if (answer2.equals("exit")) break; //exit command
-
-                        calendar.add(new Event(title, date, time, description, location, category, group, dateEnd, timeEnd));
-                        System.out.println("Successfully created new event!\n" + calendar.getLast());
-                    }
+        //ask for year
+        while (true) {
+            System.out.print("Event year: ");
+            answer = user.next();
+            if (answer.equals("exit")) {
+                break;
+            } else {
+                try {
+                    date[2] = Integer.parseInt(answer);
                     break;
-
-                case "help":
-                    System.out.print( "Commands: event, help");
-                    break;
-
-                case "exit":
-                    break;
-
-                default:
-                    System.out.print(" Invalid response. Command does not exist.");
-                    break;
-
+                } catch (NumberFormatException e) {
+                    System.out.print(" Invalid integer. ");
+                }
             }
         }
+
+        if (answer.equals("exit")) return; //exit command
+
+        //ask for month
+        date[1] = -1;
+        while (date[1] <= 0 || date[1] > 12) {
+            System.out.print("Event month: ");
+            answer = user.next().toLowerCase();
+            if (answer.equals("exit")) {
+                break;
+            } else {
+                try {
+                    date[1] = Integer.parseInt(answer);
+                } catch (NumberFormatException e) {
+                    date[1] = monthToInt(answer);
+                }
+            }
+        }
+
+        if (answer.equals("exit")) return; //exit command
+
+        //ask for day
+        while (true) {
+            System.out.print("Event day: ");
+            answer = user.next();
+            if (answer.equals("exit")) {
+                break;
+            } else {
+                try {
+                    date[0] = Integer.parseInt(answer);
+                    break;
+                } catch (NumberFormatException e) {
+                    System.out.print(" Invalid integer. ");
+                }
+            }
+        }
+
+        if (answer.equals("exit")) return; //exit command
+
+        //ask to add optional information
+        boolean optional = false;
+        System.out.print("Add optional information? That includes time, description, and locations. (yes/no) ");
+        while (true) {
+            answer = user.next();
+            if (answer.equals("yes") || answer.equals("y")) {
+                optional = true;
+                break;
+            } else if (answer.equals("no") || answer.equals("n") || answer.equals("exit"))
+                break; //exits while loop without changing optional to true
+            else System.out.print(" ");
+        }
+
+        if (answer.equals("exit")) return; //exit command
+
+        //ask to add ending dates/times
+        boolean ends = false;
+        System.out.print("Add ending dates/times? (yes/no) ");
+        while (true) {
+            answer = user.next();
+            if (answer.equals("yes") || answer.equals("y")) {
+                ends = true;
+                break;
+            } else if (answer.equals("no") || answer.equals("n") || answer.equals("exit"))
+                break; //exits while loop without changing optional to true
+            else System.out.print(" ");
+        }
+
+        if (answer.equals("exit")) return; //exit command
+
+        if (!optional && !ends) {
+            calendar.add(new Event(category, title, date));
+            System.out.println("Successfully created new event!\n" + calendar.getLast());
+            return;
+        }
+        if (optional) {
+            //ask for hour
+            while (true) {
+                System.out.print("Event hour (24hr): ");
+                answer = user.next();
+                if (answer.equals("exit") || answer.equals("skip")) {
+                    break;
+                } else {
+                    try {
+                        time[0] = Integer.parseInt(answer);
+                        if (time[0] >= 0 && time[0] < 24) {
+                            break;
+                        } else System.out.print(" Hour must be between 0 and 23.");
+                    } catch (NumberFormatException e) {
+                        System.out.print(" Invalid integer. ");
+                    }
+                }
+            }
+
+            if (answer.equals("exit")) return; //exit command
+
+            //ask for minute
+            while (true) {
+                System.out.print("Event time (min): ");
+                answer = user.next();
+                if (answer.equals("exit") || answer.equals("skip")) {
+                    break;
+                } else {
+                    try {
+                        time[1] = Integer.parseInt(answer);
+                        if (time[1] >= 0 && time[1] < 60) {
+                            break;
+                        } else System.out.print(" Time must be between 0 and 59.");
+                    } catch (NumberFormatException e) {
+                        System.out.print(" Invalid integer. ");
+                    }
+                }
+            }
+
+            if (answer.equals("exit")) return; //exit command
+
+            //ask for description
+            System.out.print("Event description (skip for none): ");
+            answer = user.next();
+            if (!answer.equalsIgnoreCase("skip"))
+                description = answer;
+
+            if (answer.equals("exit")) return; //exit command
+
+            //ask for locations
+            int count = 1;
+            while (true) {
+                System.out.print("Event location " + count + " (skip to continue): ");
+                answer = user.next();
+                if (answer.equalsIgnoreCase("skip") || answer.equals("exit"))
+                    break;
+                else {
+                    location.add(answer);
+                    count++;
+                }
+            }
+
+            if (answer.equals("exit")) return; //exit command
+        }
+        if (ends) {
+            //ask for ending year
+            while (true) {
+                System.out.print("Event ending year (skip for same as beginning): ");
+                answer = user.next();
+                if (answer.equalsIgnoreCase("skip") || answer.equals("exit")) {
+                    dateEnd[2] = date[2];
+                    break;
+                } else {
+                    try {
+                        dateEnd[2] = Integer.parseInt(answer);
+                        break;
+                    } catch (NumberFormatException e) {
+                        System.out.print(" Invalid integer. ");
+                    }
+                }
+            }
+
+            if (answer.equals("exit")) return; //exit command
+
+            //ask for ending month
+            dateEnd[1] = -1;
+            while (dateEnd[1] <= 0 || dateEnd[1] > 12) {
+                System.out.print("Event ending month (skip for same as beginning): ");
+                answer = user.next().toLowerCase();
+                if (answer.equalsIgnoreCase("skip") || answer.equals("exit")) {
+                    dateEnd[1] = date[1];
+                    break;
+                } else {
+                    try {
+                        dateEnd[1] = Integer.parseInt(answer);
+                    } catch (NumberFormatException e) {
+                        dateEnd[1] = monthToInt(answer);
+                    }
+                }
+            }
+
+            if (answer.equals("exit")) return; //exit command
+
+            //ask for ending day
+            while (true) {
+                System.out.print("Event ending day (skip for same as beginning): ");
+                answer = user.next();
+                if (answer.equalsIgnoreCase("skip") || answer.equals("exit")) {
+                    dateEnd[0] = date[0];
+                    break;
+                } else {
+                    try {
+                        dateEnd[0] = Integer.parseInt(answer);
+                        break;
+                    } catch (NumberFormatException e) {
+                        System.out.print(" Invalid integer. ");
+                    }
+                }
+            }
+
+            if (answer.equals("exit")) return; //exit command
+        }
+
+        if (!ends) {
+            calendar.add(new Event(title, date, time, description, location, category, group));
+            System.out.println("Successfully created new event!\n" + calendar.getLast());
+            return;
+        }
+
+        if (optional && ends) {
+            //ask for ending hour
+            while (true) {
+                System.out.print("Event ending hour (24hr): ");
+                answer = user.next();
+                if (answer.equals("exit") || answer.equals("skip")) {
+                    break;
+                } else {
+                    try {
+                        timeEnd[0] = Integer.parseInt(answer);
+                        if (timeEnd[0] >= 0 && timeEnd[0] < 24) {
+                            break;
+                        } else System.out.print(" Hour must be between 0 and 23. ");
+                    } catch (NumberFormatException e) {
+                        System.out.print(" Invalid integer. ");
+                    }
+                }
+            }
+
+            if (answer.equals("exit")) return; //exit command
+
+            //ask for ending minute
+            while (true) {
+                System.out.print("Event ending time (min): ");
+                answer = user.next();
+                if (answer.equals("exit") || answer.equals("skip")) {
+                    break;
+                } else {
+                    try {
+                        timeEnd[1] = Integer.parseInt(answer);
+                        if (timeEnd[1] >= 0 && timeEnd[1] < 60) {
+                            break;
+                        } else System.out.print(" Time must be between 0 and 59. ");
+                    } catch (NumberFormatException e) {
+                        System.out.print(" Invalid integer. ");
+                    }
+                }
+            }
+
+            if (answer.equals("exit")) return; //exit command
+        }
+        calendar.add(new Event(title, date, time, description, location, category, group, dateEnd, timeEnd));
+        System.out.println("Successfully created new event!\n" + calendar.getLast());
     }
 
     // What happens when the user uses the command "edit".
     public static void edit() {
         String answer = "";
         while (!answer.equals("exit")) {
-            System.out.print("\nWhich event would you like to edit? ");
+            System.out.print("\nWhich event would you like to edit? Please input an integer of the index in the list. ");
             answer = user.next().toLowerCase();
             int index;
             try {
@@ -424,8 +429,8 @@ public class Main {
 
     // Prompts the user to select options for sorting the calendar.
     public static void sort() {
-        String answer = "";
-        while (!answer.equals("exit")) {
+        String answer = "help";
+        while (answer.equals("help")) {
             System.out.print("\nHow would you like to sort the calendar? ");
             answer = user.next().toLowerCase();
             String answer2;
@@ -448,7 +453,7 @@ public class Main {
                     }
                     break;
                 case "group":
-                    System.out.print("\nAscending or descending?");
+                    System.out.print("\nAscending or descending? ");
                     answer2 = user.next().toLowerCase();
                     switch (answer2) {
                         case "ascending", "asc", "a", "+":
@@ -465,7 +470,7 @@ public class Main {
                     }
                     break;
                 case "title":
-                    System.out.print("\nAscending or descending?");
+                    System.out.print("\nAscending or descending? ");
                     answer2 = user.next().toLowerCase();
                     switch (answer2) {
                         case "ascending", "asc", "a", "+":
@@ -494,7 +499,7 @@ public class Main {
     }
 
     // Prints the calendar into "calendar.txt"
-    public static void printTXT(ArrayList<Event> list) {
+    public static void printTXT() {
         FileOutputStream myFile;
         try {
             myFile = new FileOutputStream("calendar.txt");
@@ -506,7 +511,7 @@ public class Main {
         PrintWriter writer = new PrintWriter(myFile);
 
         // Enhanced switch generated by Intellij
-        for (Event event : list) {
+        for (Event event : calendar) {
             //Prints information from the current event in the for loop
             writer.println(event.toString());
         }
@@ -516,7 +521,7 @@ public class Main {
     }
 
     // Prints the calendar into "calendar.txt"
-    public static void printCSV(ArrayList<Event> list) {
+    public static void printCSV() {
         FileOutputStream myFile;
         try {
             myFile = new FileOutputStream("calendar.csv");
@@ -530,7 +535,7 @@ public class Main {
         writer.println("Category, Title, Date, Ending Date, Time, Ending Time, Locations");
 
         // Enhanced switch generated by Intellij
-        for (Event event : list) {
+        for (Event event : calendar) {
             String month = intToMonth(event.getDate()[1]);
             String endMonth = Main.intToMonth(event.getDateEnd()[1]);
 
@@ -552,6 +557,117 @@ public class Main {
         writer.flush();
         writer.close();
     }
+
+    // Stores calendar data in a txt file of the user's choosing with the data delimited by /.
+    public static void save() {
+        System.out.print("Save files loaded:\n      ");
+        saves.print();
+        System.out.print("Please enter file name: ");
+        String answer = user.next().toLowerCase();
+        if (answer.equals("exit")) {
+            return;
+        }
+
+        FileOutputStream myFile = null;
+        try {
+            myFile = new FileOutputStream("saves/" + answer + ".txt");
+        }
+        catch (FileNotFoundException e) {
+            System.out.print(" Exception detected. Save failed: " + e);
+            return;
+        }
+        PrintWriter writer = new PrintWriter(myFile);
+
+        // Enhanced switch generated by Intellij
+        for (Event event : calendar) {
+            String print = ""; // String Delimiter: /.
+            print += event.getTitle() + "/."; // Title
+            print += event.getDate()[0] + "/." + event.getDate()[1] + "/." + event.getDate()[2] + "/."; // Date
+            print += event.getTime()[0] + "/." + event.getTime()[1] + "/."; // Time
+            print += event.getDescription() + "/."; // Description
+            for (String l : event.getLocation()) { // Location
+                print += l + ":, "; // Second delimiter: :,
+            }
+            print += "/.";
+            print += event.getCategory() + "/."; // Category
+            print += event.getGroup() + "/."; // Group
+            print += event.getDateEnd()[0] + "/." + event.getDateEnd()[1] + "/." + event.getDateEnd()[2] + "/."; // Ending Date
+            print += event.getTimeEnd()[0] + "/." + event.getTimeEnd()[1] + "/."; // Ending Time
+
+            writer.println(print); //Prints information from the current event in the for loop
+        }
+
+        writer.flush();
+        writer.close();
+
+        // Adds the name of the file to the list of file names if it doesn't exist already
+        boolean hasFile = false;
+        Queue temp = new Queue();
+        while (!saves.isEmpty()) {
+            String s = saves.remove();
+            hasFile = s.equals(answer);
+            temp.add(s);
+        }
+        saves = temp;
+        if (!hasFile) {
+            saves.add(answer);
+        }
+
+        System.out.println("Save complete.");
+    }
+
+    public static void load() {
+        Queue temp = new Queue();
+        String file = null;
+        System.out.print("Which file do you want to load?\n      ");
+        saves.print();
+        while (file == null) {
+            String answer = user.next();
+            while (!saves.isEmpty()){
+                String s = saves.remove();
+                if (s.equals(answer)) {
+                    file = answer;
+                }
+                temp.add(s);
+            }
+            if (answer.equals("exit")) {
+                saves = temp;
+                return;
+            }
+            else if (file == null) {
+                System.out.println("Please input a valid file name.");
+                saves = temp;
+                temp = new Queue();
+            }
+        }
+        saves = temp;
+
+        FileInputStream myFile = null;
+        try {
+            myFile = new FileInputStream("saves/" + file + ".txt");
+        }
+        catch (FileNotFoundException e) {
+            System.out.println("Error: Mismatch between ]saves_files[ and file names in saves folder. " + e);
+        }
+        Scanner reader = new Scanner(myFile);
+        calendar = new ArrayList<>();
+        while (reader.hasNextLine()) {
+            String[] line = reader.nextLine().split("/.");
+            calendar.add(new Event(
+                    line[0], // Title
+                    new int[]{Integer.parseInt(line[1]), Integer.parseInt(line[2]), Integer.parseInt(line[3])}, // Date: dd,mm,yy
+                    new int[]{Integer.parseInt(line[4]), Integer.parseInt(line[5])}, //Time: mm,hh
+                    line[6], // Description
+                    new ArrayList<String>(List.of(line[7].split(":,"))),
+                    line[8],
+                    Integer.parseInt(line[9]),
+                    new int[]{Integer.parseInt(line[10]), Integer.parseInt(line[11]), Integer.parseInt(line[12])},
+                    new int[]{Integer.parseInt(line[13]), Integer.parseInt(line[14])}
+                    )); // Adds the elements of the line from the save to the calendar. This is an absolute mess to read.
+            calendar.getLast().getLocation().removeLast();
+        }
+    }
+
     // ==================================
     // FUNCTIONS TO USE IN OTHER METHODS
     // ==================================
