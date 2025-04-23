@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Event {
     // Required information
@@ -10,12 +11,12 @@ public class Event {
     private String description = " ";
     private ArrayList<String> location = new ArrayList<>(); // Event can have multiple locations saved.
     private String category = "Uncategorized"; // Name of the category which the event is part of
-    private int group = 0; // Priority of the category which the event is part of (for sorting)
 
     // 2D Event information
     private int[] dateEnd = new int[]{-1,-1,-1}; // Format: dd,mmy,yyy
     private int[] timeEnd = new int[]{-1,-1}; // Format: mm,hh
 
+    //Blank Constructor (idk why this is here)
     public Event() {
 
     }
@@ -34,25 +35,23 @@ public class Event {
     }
 
     // All 1D information constructor
-    public Event(String title, int[] date, int[] time, String description, ArrayList<String> location, String category, int group) {
+    public Event(String title, int[] date, int[] time, String description, ArrayList<String> location, String category) {
         this.title = title;
         this.date = date;
         this.time = time;
         this.description = description;
         this.location = location;
         this.category = category;
-        this.group = group;
     }
 
     // 2D Event constructor
-    public Event(String title, int[] date, int[] time, String description, ArrayList<String> location, String category, int group, int[] dateEnd, int[] timeEnd) {
+    public Event(String title, int[] date, int[] time, String description, ArrayList<String> location, String category, int[] dateEnd, int[] timeEnd) {
         this.title = title;
         this.date = date;
         this.time = time;
         this.description = description;
         this.location = location;
         this.category = category;
-        this.group = group;
         this.dateEnd = dateEnd;
         this.timeEnd = timeEnd;
     }
@@ -63,31 +62,28 @@ public class Event {
     public String toString() {
         String month = Main.intToMonth(date[1]);
         String endMonth = Main.intToMonth(dateEnd[1]);
-        String timeString = "" + time[1];
-        if (timeString.length() < 2) {
+        String timeString = "" + time[0];
+        if (time[0]/10 == 0) {
             timeString = "0" + timeString;
         }
-        String timeEndString = "" + timeEnd[1];
-        if (timeEndString.length() < 2) {
+        String timeEndString = "" + timeEnd[0];
+        if (timeEnd[0]/10 == 0) {
             timeEndString = "0" + timeEndString;
         }
 
         String s = "";
         s += "(" + category + ")"; // Category
         s += ", " + title; // Title
-        s += ": " + month + " " + date[0] + ", " + date[2]; // Date
-        if (dateEnd[0] != -1 && dateEnd != date) {
+        if (date[0] != -1)
+            s += ": " + month + " " + date[0] + ", " + date[2]; // Date
+        if (dateEnd[0] != -1 && !Arrays.equals(date, dateEnd))
             s += " - " + endMonth + " " + dateEnd[0] + ", " + dateEnd[2]; // Ending Date (if exists)
-        }
-        if (time[0] != -1) {
-            s += ", " + time[0] + ":" + timeString; // Time (if exists)
-        }
-        if (timeEnd[0] != -1) {
-            s += " - " + timeEnd[0] + ":" + timeEndString; // Ending Time (if exists)
-        }
-        if (!location.isEmpty()) {
+        if (time[0] != -1)
+            s += ", " + time[1] + ":" + timeString; // Time (if exists)
+        if (timeEnd[0] != -1 && !Arrays.equals(time, timeEnd))
+            s += " - " + timeEnd[1] + ":" + timeEndString; // Ending Time (if exists)
+        if (!location.isEmpty())
             s += ", " + location; // Location (if exists)
-        }
 
         return s;
     }
@@ -139,14 +135,6 @@ public class Event {
 
     public void setCategory(String category) {
         this.category = category;
-    }
-
-    public int getGroup() {
-        return group;
-    }
-
-    public void setGroup(int group) {
-        this.group = group;
     }
 
     public int[] getDateEnd() {

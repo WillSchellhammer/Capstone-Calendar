@@ -1,7 +1,8 @@
 Category, Title, Date, Ending Date, Time, Ending Time, Locations
-(Class), Computer_Science, April 4 2025, April 4 2025, 14:0, 16:45, Kirby-Manchester_241
-(Class), Discrete_Math, April 4 2025, April 4 2025, 12:30, 13:45, Salem_Hall_012
-(Meeting), Engineering_Group_Meeting, April 7 2025, Invalid Month -1 -1, 2:0, -1:-1
-(Music_Ensemble), Wind_Ensemble, April 7 2025, April 7 2025, 3:30, 4:50, M201, Scales_Fine_Arts_Center
-(Assignment), Lab_7, April 11 2025, Invalid Month -1 -1, -1:-1, -1:-1
-(Holiday), AAPI_Month, May 1 2025, May 30 2025, -1:-1, -1:-1
+(Holiday), AAPI Month, May 1 2025, May 30 2025, -1:-1, -1:-1
+(Class), Computer Science, April 4 2025, April 4 2025, 0:14, 45:16
+(Class), Discrete Math, April 4 2025, April 4 2025, 30:12, 45:13
+(Meeting), Engineering Group Meeting, April 7 2025, Invalid Month -1 -1, 0:14, -1:-1
+(Assignment), Lab 8, April 18 2025, Invalid Month -1 -1, 59:10, -1:-1
+(Uncategorized), Weekend, April 5 2025, April 6 2025, -1:-1, -1:-1
+(Music Ensemble), Wind Ensemble, April 7 2025, April 7 2025, 30:15, 50:16, M201, Scales Fine Arts Center

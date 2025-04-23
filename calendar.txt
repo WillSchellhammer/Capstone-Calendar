@@ -1,6 +1,7 @@
-(Class), Computer_Science: April 4, 2025 - April 4, 2025, 14:00 - 16:45, [Kirby-Manchester_241]
-(Class), Discrete_Math: April 4, 2025 - April 4, 2025, 12:30 - 13:45, [Salem_Hall_012]
-(Meeting), Engineering_Group_Meeting: April 7, 2025, 2:00
-(Music_Ensemble), Wind_Ensemble: April 7, 2025 - April 7, 2025, 3:30 - 4:50, [M201, Scales_Fine_Arts_Center]
-(Assignment), Lab_7: April 11, 2025
-(Holiday), AAPI_Month: May 1, 2025 - May 30, 2025
+(Holiday), AAPI Month: May 1, 2025 - May 30, 2025
+(Class), Computer Science: April 4, 2025, 14:00 - 16:45
+(Class), Discrete Math: April 4, 2025, 12:30 - 13:45
+(Meeting), Engineering Group Meeting: April 7, 2025, 14:00
+(Assignment), Lab 8: April 18, 2025, 10:59
+(Uncategorized), Weekend: April 5, 2025 - April 6, 2025
+(Music Ensemble), Wind Ensemble: April 7, 2025, 15:30 - 16:50, [M201, Scales Fine Arts Center]

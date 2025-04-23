@@ -1,6 +1,7 @@
-Computer_Science/.4/.4/.2025/.14/.0/. /.Kirby-Manchester_241:, /.Class/.0/.4/.4/.2025/.16/.45/.
-Discrete_Math/.4/.4/.2025/.12/.30/.Learn_about_proofs_and_logic./.Salem_Hall_012:, /.Class/.0/.4/.4/.2025/.13/.45/.
-Engineering_Group_Meeting/.7/.4/.2025/.2/.0/.Meet_with_classmates/./.Meeting/.0/.-1/.-1/.-1/.-1/.-1/.
-Wind_Ensemble/.7/.4/.2025/.3/.30/./.M201:,Scales_Fine_Arts_Center:, /.Music_Ensemble/.0/.7/.4/.2025/.4/.50/.
-Lab_7/.11/.4/.2025/.-1/.-1/. /./.Assignment/.0/.-1/.-1/.-1/.-1/.-1/.
-AAPI_Month/.1/.5/.2025/.-1/.-1/././.Holiday/.0/.30/.5/.2025/.-1/.-1/.
+AAPI Month/.1/.5/.2025/.-1/.-1/././.Holiday/.30/.5/.2025/.-1/.-1/.
+Computer Science/.4/.4/.2025/.0/.14/. /./.Class/.4/.4/.2025/.45/.16/.
+Discrete Math/.4/.4/.2025/.30/.12/.Learn_about_proofs_and_logic././.Class/.4/.4/.2025/.45/.13/.
+Engineering Group Meeting/.7/.4/.2025/.0/.14/.Meet_with_classmates/./.Meeting/.-1/.-1/.-1/.-1/.-1/.
+Lab 8/.18/.4/.2025/.59/.10/. /./.Assignment/.-1/.-1/.-1/.-1/.-1/.
+Weekend/.5/.4/.2025/.-1/.-1/././.Uncategorized/.6/.4/.2025/.-1/.-1/.
+Wind Ensemble/.7/.4/.2025/.30/.15/./.M201:,Scales Fine Arts Center:,/.Music Ensemble/.7/.4/.2025/.50/.16/.
